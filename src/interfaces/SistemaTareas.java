@@ -1,3 +1,4 @@
+package interfaces;
 import modulos.Usuario;
 import modulos.Profesor;
 import modulos.Ayudante;
