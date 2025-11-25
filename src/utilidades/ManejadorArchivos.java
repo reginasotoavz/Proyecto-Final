@@ -1,51 +1,64 @@
 package utilidades;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.*;
+import modulos.Usuario;
+import modulos.Profesor;
+import modulos.Ayudante;
+import modulos.Tarea;
+import java.time.LocalDate;
 
 public class ManejadorArchivos {
-    public static List<String> leerArchivo(String rutaArchivo) {
-        File archivo = new File(rutaArchivo);
-        if (!archivo.exists()) {
-            return new String [0];
+
+    // Ruta donde se guardarán los archivos
+    private static final String RUTA_USUARIOS = "data/usuarios.csv";
+    private static final String RUTA_TAREAS = "data/tareas.csv";
+
+    // --- GUARDAR USUARIOS ---
+    public static void guardarUsuarios(List<Usuario> usuarios) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(RUTA_USUARIOS))) {
+            for (Usuario u : usuarios) {
+                // Formato: TIPO,NOMBRE,CORREO
+                // Ejemplo: Profesor,Juan,juan@email.com
+                String tipo = (u instanceof Profesor) ? "Profesor" : "Ayudante";
+                writer.write(tipo + "," + u.getNombre() + "," + u.getEmail());
+                writer.newLine();
+            }
+            System.out.println("Usuarios guardados correctamente.");
+        } catch (IOException e) {
+            System.err.println("Error al guardar usuarios: " + e.getMessage());
         }
-        List<String> lineas = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+    }
+
+    // --- CARGAR USUARIOS ---
+    public static List<Usuario> cargarUsuarios() {
+        List<Usuario> usuarios = new ArrayList<>();
+        File archivo = new File(RUTA_USUARIOS);
+        
+        if (!archivo.exists()) return usuarios; // Si no existe, devuelve lista vacía
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
             String linea;
-            while ((linea = br.readLine()) != null) {
-                lineas.add(linea);
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 3) {
+                    String tipo = partes[0];
+                    String nombre = partes[1];
+                    String email = partes[2];
+
+                    if (tipo.equals("Profesor")) {
+                        usuarios.add(new Profesor(nombre, email));
+                    } else if (tipo.equals("Ayudante")) {
+                        usuarios.add(new Ayudante(nombre, email));
+                    }
+                }
             }
-            catch (IOException e) {
-                System.err.println("Error al leer el archivo: " + e.getMessage());
-                return new String[0];
+        } catch (IOException e) {
+            System.err.println("Error al cargar usuarios: " + e.getMessage());
         }
-        return lineas.toArray(new String[0]);
+        return usuarios;
     }
-
-public static String buscarLinea(String cadenaBuscada, String rutaArchivo) {
-    File archivo = new File(rutaArchivo);
-    if (!archivo.exists()) {
-        return null;
-    }
-    try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
-        String linea;
-        while ((linea = br.readLine()) != null) {
-            if (linea.contains(cadenaBuscada)) {
-                return linea;
-            }
-        }
-    } catch (IOException e) {
-        System.err.println("Error al leer el archivo: " + e.getMessage());
-    }
-    return null;
+    
+    // --- AQUÍ FALTARÍA LA LÓGICA SIMILAR PARA TAREAS (ID,TITULO,FECHA,ESTADO) ---
 }
-
-public static void escribirLineaAlFinal(String linea, String rutaArchivo) {
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter(rutaArchivo, true))) {
-        bw.write(linea);
-        bw.newLine();
-    } catch (IOException e) {
-        System.err.println("Error al escribir en el archivo: " + e.getMessage());
-    }
-}
-
