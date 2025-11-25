@@ -1,26 +1,44 @@
 package modulos;
 import java.util.Objects;
+import java.util.Scanner;
 
 public abstract class Usuario {
     protected String nombre;
-    protected String email;
+    protected String correo;
     protected String rol;
     protected String password;
 
-    public Usuario(String nombre, String email, String rol) {
-        if (nombre == null || email == null || rol == null || nombre.isEmpty() || email.isEmpty() || rol.isEmpty()) {
-            throw new IllegalArgumentException("Nombre, email y rol no pueden ser nulos.");
+    public Usuario(String nombre, String correo, String rol, String password) {
+        if (nombre == null || nombre.length() < 5 ) {
+            throw new IllegalArgumentException("EL nombre debe de tener al menos 5 letras");
         }
-        if (nombre.length() < 5) {
-            throw new IllegalArgumentException("Nombre debe tener al menos 5 caracteres.");
+
+        if (correo == null || !correo.contains("@") || !correo.endsWith(".com")) {
+            throw new IllegalArgumentException("Correo no es válido (debe contener '@' y terminar en '.com').");
         }
-        if (!email.contains("@") || !email.endsWith(".com")) {
-            throw new IllegalArgumentException("Email no es válido.");
-        }
-        if (!rol.equals("Profesor") && !rol.equals("Ayudante")) {
+        if (rol == null || (!rol.equals("Profesor") && !rol.equals("Ayudante"))) {
             throw new IllegalArgumentException("Rol debe ser 'Profesor' o 'Ayudante'.");
         }
-        if (password != null && password.length() < 8) {
+
+        this.nombre = nombre;
+        this.correo = correo;
+        this.rol = rol;
+
+        setPassword(password);
+    }
+
+    public String getNombre() { return nombre;
+    }
+    public String getCorreo() { return correo;
+    }
+    public String getRol() { return rol;
+    }
+    public String getPassword() { return password;
+    }
+
+
+    public void setPassword(String password) {
+        if (password == null || password.length() < 8) {
             throw new IllegalArgumentException("Contraseña debe tener al menos 8 caracteres.");
         }
         if (!password.matches(".*\\d.*")) {
@@ -29,54 +47,32 @@ public abstract class Usuario {
         if (!password.matches(".*[!@#$%^&*()].*")) {
             throw new IllegalArgumentException("Contraseña debe contener al menos un carácter especial.");
         }
-        if (password.matches(".*\\s.*")) {
+        if (password.contains(" ")) {
             throw new IllegalArgumentException("Contraseña no debe contener espacios.");
         }
-
-        this.nombre = nombre;
-        this.email = email;
-        this.rol = rol;
-        this.password = "default123"; // Contraseña por defecto
+        this.password = password;
     }
 
-    public String getNombre() {
-        return nombre;
+        public boolean checkCredentials(String correoInput, String passwordInput) {
+        return this.correo.equalsIgnoreCase(correoInput) && this.password.equals(passwordInput);
     }
-    public String getEmail() {
-        return email;
-    }
-    public String getRol() {
-        return rol;
-    public String getPassword() {
-        return password;
-    }
-    public boolean checkCredentials(String email, String password) {
-        return this.email.equalsIgnoreCase(email) && this.password.equals(password);
-    }
-
-    public abstract void mostrarMenu();
+    public abstract void mostrarMenu(SistemaTareas sistema, Scanner sc);
 
         @Override
     public String toString() {
-        return String.format("Usuario: %s | Rol: %s", email, role);
+        return String.format("Usuario: %s (%s) -%s", nombre, correo, rol);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        final Usuario other = (Usuario) obj;
-        if (!Objects.equals(this.nombre, other.nombre || !Objects.equals(this.email, other.email))) {
-            return false;
+        Usuario other = (Usuario) obj;
+        return Objects.equals(this.correo, other.correo);
         }
-        return Objects.equals(this.rol, other.rol);
-    }
+
     @Override
      public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.nombre);
-        hash = 53 * hash + Objects.hashCode(this.correo);
-        hash = 53 * hash + Objects.hashCode(this.rol);
-        return hash;
+        return Objects.hash(correo);
     }
 }
