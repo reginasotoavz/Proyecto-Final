@@ -50,8 +50,16 @@ public abstract class Usuario {
     public String getPassword() {
         return password;
     }
+    public boolean checkCredentials(String email, String password) {
+        return this.email.equalsIgnoreCase(email) && this.password.equals(password);
+    }
 
     public abstract void mostrarMenu();
+
+        @Override
+    public String toString() {
+        return String.format("Usuario: %s | Rol: %s", email, role);
+    }
     
     @Override
     public boolean equals(Object obj) {
