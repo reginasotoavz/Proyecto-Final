@@ -1,99 +1,173 @@
-/* public class SistemaTareas {
-    private List<Usuario> usuarios;
-    private List<Tarea> tareas;
-    private Notificador notificador; // Referencia al hilo
-
-    public void iniciarSistema() {
-        // 1. Cargar datos del archivo al iniciar
-        this.usuarios = ManejadorArchivos.cargarUsuarios();
-        // this.tareas = ManejadorArchivos.cargarTareas(); // (Cuando lo implementes)
-
-        // 2. Iniciar el hilo notificador
-        notificador = new Notificador(this.tareas);
-        notificador.start(); // ¡Importante! Usar start(), no run()
-
-        // 3. Mostrar menú principal (Login, etc.)
-        mostrarMenuPrincipal();
-    }
-    
-    public void cerrarSistema() {
-        // Guardar antes de salir
-        ManejadorArchivos.guardarUsuarios(this.usuarios);
-        
-        // Detener el hilo
-        if (notificador != null) {
-            notificador.detener();
-        }
-    }
-} */
 package modulos;
 
 import java.util.List;
-import java.util.ArrayList; // O import utilidades.ManejadorLista;
+import java.util.ArrayList;
+import java.util.Scanner;
 import utilidades.ManejadorArchivos;
 import utilidades.Notificador;
 
 public class SistemaTareas {
-
-    // Listas para guardar la información en memoria mientras el programa corre
-    private List<Usuario> listaUsuarios; // O tu ManejadorLista<Usuario>
+    private List<Usuario> listaUsuarios; 
     private List<Tarea> listaTareas;
-    
-    private Usuario usuarioLogueado; // Para saber quién está usando el sistema
-    private Notificador hiloNotificador; // Referencia al hilo
+    private Usuario usuarioLogueado; 
+    private Notificador hiloNotificador; 
+}
 
-    // CONSTRUCTOR
     public SistemaTareas() {
-        // 1. Inicializar las listas vacías
         this.listaUsuarios = new ArrayList<>();
         this.listaTareas = new ArrayList<>();
-        
-        // 2. Cargar datos desde los archivos (Persistencia)
-        // Pista: Llama a los métodos estáticos que creaste en ManejadorArchivos
-        // this.listaUsuarios = ManejadorArchivos.cargarUsuarios();
+        this.sc = new Scanner(System.in);
+        this.listaUsuarios = ManejadorArchivos.cargarUsuarios();
+        this.listaTareas = ManejadorArchivos.cargarTareas();
+
+        if (this.listaUsuarios.isEmpty()) {
+            System.out.println("No hay usuarios registrados. Creando usuario Profesor por defecto.");
+            listaUsuarios.add(new Profesor("Admin", "admincorreo@test.com, Admin123!"));
     }
 
     // MÉTODOS PRINCIPALES
-
     public void iniciar() {
-        // TODO: Aquí arranca la lógica.
-        
-        // 1. Iniciar el Hilo Notificador (Pista: new Notificador(...).start())
-        
-        // 2. Mostrar menú de Login
-        // login(); 
+        System.out.println("> Iniciando Sistema de Tareas OdinDimadinDon <");
+        hilonotificador = new Notificador(this.listaTareas);
+        hilonotificador.start();
+
+        boolean salir = false;
+        while (!salir) {
+            login();
+            System.out.println("Bienvenidx al sistema de tareas.");
+            System.out.println("1. Iniciar sesión");
+            System.out.println("2. Salir");
+            System.out.print("Seleccione una opción: ");
+            String opcion = sc.nextLine();
+
+            String input = sc.nextLine();
+            switch (input) {
+                case "1":
+                    login();
+                    break;
+                case "2":
+                    salir = true;
+                    cerrarSistema();
+                    System.out.println("Saliendo del sistema. ¡Hasta luego!");
+                    break;
+                default:
+                    System.out.println("Opción no válida. Por favor, intente de nuevo.");
+            }
+        }
     }
 
     public void login() {
-        // TODO: Pedir correo al usuario con Scanner.
-        // Buscar en listaUsuarios si existe ese correo.
-        
-        // Si existe:
-        // this.usuarioLogueado = usuarioEncontrado;
-        // usuarioLogueado.mostrarMenu(); (Esto llama al menú del Profesor o Ayudante)
-        
-        // Pista: Como Profesor y Ayudante heredan de Usuario, Java sabe
-        // automáticamente qué menú mostrar (Polimorfismo).
+        System.out.print("Ingrese su correo: ");
+        String correoIngresado = sc.nextLine();
+
+        System.out.print("Ingrese su contraseña: ");
+        String passwordIngresada = sc.nextLine();
+
+        Usuario usuarioEncontrado = null;
+
+        for (Usuario u : listaUsuarios) {
+            if (u .checkCredentials(correoIngresado, passwordIngresada)) {
+                usuarioEncontrado = u;
+                break;
+            }
+        }
+        if (usuarioEncontrado != null) {
+            System.out.println("Inicio de sesión exitoso. ¡Bienvenidx, " + usuarioEncontrado.getNombre() + "!");
+            this.usuarioLogueado = usuarioEncontrado;
+            usuarioLogueado.mostrarMenu(this, sc);
+        } else {
+            System.out.println("❌ Correo o contraseña incorrectos. Intente de nuevo.");
+        }
     }
-    
-    // FUNCIONES QUE LLAMARÁ EL MENÚ DEL PROFESOR/AYUDANTE
-    
-    public void crearTarea(String titulo, String descripcion, String fecha, String correoAsignado) {
-        // 1. Generar un ID (puedes usar listaTareas.size() + 1)
-        // 2. Crear el objeto Tarea
-        // 3. Agregarlo a listaTareas
-        // 4. (Opcional) Guardar inmediatamente en archivo para no perder datos
+        
+    public void crearTarea(String titulo, String descripcion, String fechaStr, String correoAsignado) {
+        try {
+            int nuevoId = listaTareas.size() + 1;
+            Tarea nuevaTarea = new Tarea(nuevoId, titulo, descripcion, fechaStr, correoAsignado);
+            listaTareas.add(nuevaTarea);
+            System.out.println("Tarea creada exitosamente con ID: " + nuevoId);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error al crear tarea: " + e.getMessage());
+        }
     }
 
     public void listarTareas() {
-        // TODO: Recorrer listaTareas e imprimir cada una.
-        // for (Tarea t : listaTareas) { System.out.println(t); }
+        System.out.println("> Lista de Tareas:");
+        if (listaTareas.isEmpty()) {
+            System.out.println("No hay tareas registradas.");
+            return;
+        } else {
+            for (Tarea t : listaTareas) {
+                System.out.println(t);
+            }
+        }
+
+    }
+    
+    public void eliminarTarea(int id) {
+        boolean tareaEliminada = listaTareas.removeIf(t -> t.getId() == id);
+        if (tareaEliminada) {
+            System.out.println("Tarea con ID " + id + " eliminada exitosamente.");
+        } else {
+            System.out.println("No se encontró tarea con ID " + id + ".");
+        }
+    }
+
+    public void actualizarEstadoTarea(int id, String nuevoEstado) {
+        boolean tareaEncontrada = false;
+        for (Tarea t : listaTareas) {
+            if (t.getId() == id) {
+                t.setEstado(nuevoEstado);
+                System.out.println("Estado de la tarea ID " + id + " actualizado a: " + nuevoEstado);
+                tareaEncontrada = true;
+                break;
+            }
+        }
+        if (!tareaEncontrada) System.out.println("No se encontró tarea con ID " + id + ".");
+    }
+
+    public void registrarUsuario(String nombre, String correo, String password, String rol) {
+       try { 
+        for (Usuario u : listaUsuarios) {
+            if (u.getCorreo().equals(correo)) {
+                System.out.println("❌ Ya existe un usuario con ese correo.");
+                return;
+            }
+        }
+        if (rol.equalsIgnoreCase("Profesor")) {
+            listaUsuarios.add(new Profesor(nombre, correo, password));
+            System.out.println("Usuario " + nombre + " registrado exitosamente como Profesor.");
+        } else if (rol.equalsIgnoreCase("Ayudante")) {
+            listaUsuarios.add(new Ayudante(nombre, correo, password));
+            System.out.println("Usuario " + nombre + " registrado exitosamente como Ayudante.");
+        } else {
+            System.out.println("❌ Rol inválido. Use 'Profesor' o 'Ayudante'.");
+        }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error al registrar usuario: " + e.getMessage());
+        }
+    }
+
+    public void eliminarUsuario(String correo) {
+        if (usuarioEliminado != null && usuarioLogueado.getCorreo().equalsIgnoreCase(correo)) {
+            System.out.println("❌ No puede eliminar su propio usuario mientras está logueado.");
+            return;
+        boolean usuarioEliminado = listaUsuarios.removeIf(u -> u.getCorreo().equalsIgnoreCase(correo));
+        if (usuarioEliminado) { 
+            System.out.println("Usuario con correo " + correo + " eliminado exitosamente.");
+        } else {
+            System.out.println("No se encontró usuario con correo " + correo + ".");
+        }
     }
 
     public void cerrarSistema() {
-        // TODO: Guardar todo en archivos antes de salir.
-        // ManejadorArchivos.guardarTareas(listaTareas);
+        System.out.println("Guardando datos antes de salir...");
         
-        // TODO: Detener el hilo notificador para que el programa termine bien.
+        ManejadorArchivos.guardarUsuarios(this.listaUsuarios);
+        ManejadorArchivos.guardarTareas(this.listaTareas);
+
+        if notificador != null {
+            notificador.detener();
+        }
+        System.out.println("Datos guardados." +/n + "Cerrando sistema." + /n + "¡Hasta luego!");
     }
-}

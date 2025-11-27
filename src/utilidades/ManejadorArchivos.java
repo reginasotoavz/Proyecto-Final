@@ -21,8 +21,8 @@ public class ManejadorArchivos {
             for (Usuario u : usuarios) {
                 // Formato: TIPO,NOMBRE,CORREO
                 // Ejemplo: Profesor,Juan,juan@email.com
-                String tipo = (u instanceof Profesor) ? "Profesor" : "Ayudante";
-                writer.write(tipo + "," + u.getNombre() + "," + u.getEmail());
+                String rol = (u instanceof Profesor) ? "Profesor" : "Ayudante";
+                writer.write(rol + "," + u.getNombre() + "," + u.getCorreo());
                 writer.newLine();
             }
             System.out.println("Usuarios guardados correctamente.");
@@ -43,14 +43,14 @@ public class ManejadorArchivos {
             while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",");
                 if (partes.length == 3) {
-                    String tipo = partes[0];
+                    String rol = partes[0];
                     String nombre = partes[1];
-                    String email = partes[2];
+                    String correo = partes[2];
 
-                    if (tipo.equals("Profesor")) {
-                        usuarios.add(new Profesor(nombre, email));
-                    } else if (tipo.equals("Ayudante")) {
-                        usuarios.add(new Ayudante(nombre, email));
+                    if (rol.equals("Profesor")) {
+                        usuarios.add(new Profesor(nombre, correo));
+                    } else if (rol.equals("Ayudante")) {
+                        usuarios.add(new Ayudante(nombre, correo));
                     }
                 }
             }
@@ -60,5 +60,42 @@ public class ManejadorArchivos {
         return usuarios;
     }
     
-    // --- AQUÍ FALTARÍA LA LÓGICA SIMILAR PARA TAREAS (ID,TITULO,FECHA,ESTADO) ---
+    public static void guardarTareas(List<Tareas>tareas) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(RUTA_TAREAS))) {
+            for (Tarea t : tareas) {
+                // Formato: ID,TITULO,FECHA,ESTADO
+                writer.write(t.getId() + "," + t.getTitulo() + "," + t.getFecha().toString() + "," + t.getEstado());
+                writer.newLine();
+            }
+            System.out.println("Tareas guardadas correctamente.");
+        } catch (IOException e) {
+            System.err.println("Error al guardar tareas: " + e.getMessage());
+        }
+    }
+    public static List<Tarea> cargarTareas() {
+        List<Tarea> tareas = new ArrayList<>();
+        File archivo = new File(RUTA_TAREAS);
+        
+        if (!archivo.exists()) return tareas; // Si no existe, devuelve lista vacía
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 4) {
+                    int id = Integer.parseInt(partes[0]);
+                    String titulo = partes[1];
+                    LocalDate fecha = LocalDate.parse(partes[2]);
+                    String estado = partes[3];
+
+                    Tarea tarea = new Tarea(id, titulo, fecha, estado);
+                    tareas.add(tarea);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al cargar tareas: " + e.getMessage());
+        }
+        return tareas;
+    }
+
 }

@@ -1,54 +1,75 @@
 package modulos;
 
-package modulos;
-
 import java.time.LocalDate; // Investiga cómo usar esto
 import java.time.format.DateTimeFormatter; // Para imprimir fechas bonitas
 
 public class Tarea {
-    // ATRIBUTOS
-    // TODO: Declara aquí las variables privadas.
-    // El PDF pide: id (int o String), titulo (String), estado (String), fechaLimite (LocalDate)
-    // y usuarioAsignado (Usuario o String con el correo).
     private int id;
     private String titulo;
     private String descripcion;
-    private String estado; // Por ejemplo: "Pendiente", "En Progreso", "
-    private String fechaLimite;
+    private String estado;
+    private LocalDate fechaLimite;
     private String usuarioAsignado;
 
-    
-
-    // CONSTRUCTOR
-    public Tarea(int id, String titulo, String fechaTexto) {
+    public Tarea(int id, String titulo, String fechaTexto, String descripcion, String usuarioAsignado) {
         this.id = id;
         this.titulo = titulo;
-        this.estado = "pendiente"; // Estado por defecto
-        
-        // RETO: Convertir el String fechaTexto ("2023-11-30") a un objeto LocalDate.
-        // Pista: Usa LocalDate.parse(fechaTexto);
-        // this.fechaLimite = ...
+        this.descripcion = descripcion;
+        this.usuarioAsignado = usuarioAsignado;
+        this.estado = "pendiente"; // Estado inicial por defecto
+
+        try {
+            this.fechaLimite = LocalDate.parse(fechaTexto);
+        } catch (DateTimeParseException e) {
+            System.out.println("Formato de fecha inválido en tarea ID " + id);
+            this.fechaLimite = LocalDate.now().plusDays(7); 
+        }
+
+        LocalDate fecha = LocalDate.parse(fechaTexto);
     }
 
     // MÉTODOS GETTERS Y SETTERS
-    // Necesitas getters para que el Notificador pueda ver la fecha y el estado.
-    
+    int getId() {
+        return id;
+    }
+    String getTitulo() {
+        return titulo;
+    }
+    String getDescripcion() {
+        return descripcion;
+    }
+    String getUsuarioAsignado() {
+        return usuarioAsignado;
+    }
+
     public LocalDate getFechaLimite() {
-        // return this.fechaLimite;
-        return null; // (Borra esto y retorna la fecha real)
+        return fechaLimite;
     }
 
-    public String getEstado() {
-        // return this.estado;
-        return ""; 
+    setId(int nuevoId) {
+        this.id = nuevoId;
     }
-    
-    // TODO: Crea el método setEstado(String nuevoEstado) para cambiarlo luego.
+    setTitulo(String nuevoTitulo) {
+        this.titulo = nuevoTitulo;
+    }
+    setDescripcion(String nuevaDescripcion) {
+        this.descripcion = nuevaDescripcion;
+    }
+    setUsuarioAsignado(String nuevoUsuario) {
+        this.usuarioAsignado = nuevoUsuario;
+    }
 
-    // TOSTRING (Para imprimir la tarea en consola)
+    // El estado puede ser "pendiente", "en progreso", "completada",
+    public void setEstado(String nuevoEstado) {
+        this.estado = nuevoEstado;
+    }
+
     @Override
     public String toString() {
-        // TODO: Retorna un String bonito con la info de la tarea.
-        return "Tarea " + id + ": " + titulo + " [Vence: " + "PONER_FECHA_AQUI" + "]";
+        return "Tarea " + id + ": " + titulo + /n +
+               "| Estado: " + "[" + estado + "]" + /n +
+               "| Descripción: " + descripcion + /n +
+               "| Asignada a: " + usuarioAsignado + /n +
+               "| Fecha límite: " + fechaLimite.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 }
