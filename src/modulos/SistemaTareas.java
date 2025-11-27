@@ -7,40 +7,44 @@ import utilidades.ManejadorArchivos;
 import utilidades.Notificador;
 
 public class SistemaTareas {
+    // ATRIBUTOS
     private List<Usuario> listaUsuarios; 
     private List<Tarea> listaTareas;
     private Usuario usuarioLogueado; 
     private Notificador hiloNotificador; 
-}
+    private Scanner sc;
 
+    // CONSTRUCTOR
     public SistemaTareas() {
         this.listaUsuarios = new ArrayList<>();
         this.listaTareas = new ArrayList<>();
         this.sc = new Scanner(System.in);
+        // Cargar datos desde archivos
         this.listaUsuarios = ManejadorArchivos.cargarUsuarios();
         this.listaTareas = ManejadorArchivos.cargarTareas();
-
+        // Si no hay usuarios, se crea un usuario Profesor por defecto
         if (this.listaUsuarios.isEmpty()) {
             System.out.println("No hay usuarios registrados. Creando usuario Profesor por defecto.");
-            listaUsuarios.add(new Profesor("Admin", "admincorreo@test.com, Admin123!"));
+            listaUsuarios.add(new Profesor("Admin", "admincorreo@test.com", "Admin123!"));
+    }
     }
 
     // MÉTODOS PRINCIPALES
     public void iniciar() {
         System.out.println("> Iniciando Sistema de Tareas OdinDimadinDon <");
-        hilonotificador = new Notificador(this.listaTareas);
-        hilonotificador.start();
+        // Iniciar el hilo notificador
+        hiloNotificador = new Notificador(this.listaTareas);
+        hiloNotificador.start();
 
         boolean salir = false;
         while (!salir) {
-            login();
+            // Mostrar menú principal (Login / Salir)
             System.out.println("Bienvenidx al sistema de tareas.");
             System.out.println("1. Iniciar sesión");
             System.out.println("2. Salir");
             System.out.print("Seleccione una opción: ");
-            String opcion = sc.nextLine();
-
             String input = sc.nextLine();
+
             switch (input) {
                 case "1":
                     login();
@@ -59,7 +63,6 @@ public class SistemaTareas {
     public void login() {
         System.out.print("Ingrese su correo: ");
         String correoIngresado = sc.nextLine();
-
         System.out.print("Ingrese su contraseña: ");
         String passwordIngresada = sc.nextLine();
 
@@ -76,10 +79,12 @@ public class SistemaTareas {
             this.usuarioLogueado = usuarioEncontrado;
             usuarioLogueado.mostrarMenu(this, sc);
         } else {
-            System.out.println("❌ Correo o contraseña incorrectos. Intente de nuevo.");
+            System.out.println("❌ Correo o contraseña incorrectos.");
         }
     }
-        
+
+    // MÉTODOS DE GESTIÓN DE USUARIOS Y TAREAS    
+    // TAREAS
     public void crearTarea(String titulo, String descripcion, String fechaStr, String correoAsignado) {
         try {
             int nuevoId = listaTareas.size() + 1;
@@ -88,11 +93,13 @@ public class SistemaTareas {
             System.out.println("Tarea creada exitosamente con ID: " + nuevoId);
         } catch (IllegalArgumentException e) {
             System.out.println("Error al crear tarea: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error inesperado al crear tarea (revise formato): " + e.getMessage());
         }
     }
 
     public void listarTareas() {
-        System.out.println("> Lista de Tareas:");
+        System.out.println("\n> Lista de Tareas:");
         if (listaTareas.isEmpty()) {
             System.out.println("No hay tareas registradas.");
             return;
@@ -101,7 +108,6 @@ public class SistemaTareas {
                 System.out.println(t);
             }
         }
-
     }
     
     public void eliminarTarea(int id) {
@@ -126,14 +132,17 @@ public class SistemaTareas {
         if (!tareaEncontrada) System.out.println("No se encontró tarea con ID " + id + ".");
     }
 
+    // USUARIOS
     public void registrarUsuario(String nombre, String correo, String password, String rol) {
        try { 
+        // Verificar si el correo ya está registrado
         for (Usuario u : listaUsuarios) {
-            if (u.getCorreo().equals(correo)) {
+            if (u.getCorreo().equalsIgnoreCase(correo)) {
                 System.out.println("❌ Ya existe un usuario con ese correo.");
                 return;
             }
         }
+        // Crear y agregar el nuevo usuario según el rol
         if (rol.equalsIgnoreCase("Profesor")) {
             listaUsuarios.add(new Profesor(nombre, correo, password));
             System.out.println("Usuario " + nombre + " registrado exitosamente como Profesor.");
@@ -142,17 +151,31 @@ public class SistemaTareas {
             System.out.println("Usuario " + nombre + " registrado exitosamente como Ayudante.");
         } else {
             System.out.println("❌ Rol inválido. Use 'Profesor' o 'Ayudante'.");
-        }
-        } catch (IllegalArgumentException e) {
+        } 
+    } catch (IllegalArgumentException e) {
             System.out.println("Error al registrar usuario: " + e.getMessage());
+    }
+    }   
+
+    public void listarUsuarios() {
+        System.out.println("\n> Lista de Usuarios:");
+        if (listaUsuarios.isEmpty()) {
+            System.out.println("No hay usuarios registrados.");
+            return;
+        } else {
+            for (Usuario u : listaUsuarios) {
+                System.out.println(u);
+            }
         }
     }
 
     public void eliminarUsuario(String correo) {
-        if (usuarioEliminado != null && usuarioLogueado.getCorreo().equalsIgnoreCase(correo)) {
+        if (usuarioLogueado != null && usuarioLogueado.getCorreo().equalsIgnoreCase(correo)) {
             System.out.println("❌ No puede eliminar su propio usuario mientras está logueado.");
             return;
+        }
         boolean usuarioEliminado = listaUsuarios.removeIf(u -> u.getCorreo().equalsIgnoreCase(correo));
+        
         if (usuarioEliminado) { 
             System.out.println("Usuario con correo " + correo + " eliminado exitosamente.");
         } else {
@@ -160,14 +183,16 @@ public class SistemaTareas {
         }
     }
 
+    // MÉTODO DE CIERRE DEL SISTEMA
     public void cerrarSistema() {
         System.out.println("Guardando datos antes de salir...");
         
         ManejadorArchivos.guardarUsuarios(this.listaUsuarios);
         ManejadorArchivos.guardarTareas(this.listaTareas);
 
-        if notificador != null {
-            notificador.detener();
+        if (hiloNotificador != null) {
+            hiloNotificador.detener();
         }
-        System.out.println("Datos guardados." +/n + "Cerrando sistema." + /n + "¡Hasta luego!");
+        System.out.println("Datos guardados. \n Cerrando sistema. \n ¡Hasta luego!");
     }
+}

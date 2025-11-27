@@ -66,10 +66,10 @@ public class Tarea {
 
     @Override
     public String toString() {
-        return "Tarea " + id + ": " + titulo + /n +
-               "| Estado: " + "[" + estado + "]" + /n +
-               "| Descripción: " + descripcion + /n +
-               "| Asignada a: " + usuarioAsignado + /n +
-               "| Fecha límite: " + fechaLimite.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        return "Tarea " + id + ": " + titulo + "\n
+               | Estado: " + "[" + estado + "] \n
+               | Descripción: " + descripcion + "\n
+               | Asignada a: " + usuarioAsignado + "\n
+               | Fecha límite: " + fechaLimite.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 }
