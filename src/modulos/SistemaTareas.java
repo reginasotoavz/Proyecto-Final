@@ -151,8 +151,12 @@ public class SistemaTareas {
             listaUsuarios.add(new Ayudante(nombre, correo, password));
             System.out.println(":) Usuario " + nombre + " registrado exitosamente como Ayudante.");
             return true;
+        } else if (rol.equalsIgnoreCase("Alumno")) {
+            listaUsuarios.add(new Alumno(nombre, correo, password));
+            System.out.println(":) Usuario " + nombre + " registrado exitosamente como Alumno.");
+            return true;
         } else {
-            System.out.println("⚠︎ Rol inválido. Use 'Profesor' o 'Ayudante'.");
+            System.out.println("⚠︎ Rol inválido. Use 'Profesor' / 'Ayudante' / Alumno.");
             return false;
         } 
     } catch (IllegalArgumentException e) {
@@ -185,6 +189,61 @@ public class SistemaTareas {
         } else {
             System.out.println("⚠︎ No se encontró usuario con correo " + correo + ".");
         }
+    }
+
+    public void calificarTarea (int id, int nuevaCalificacion){
+        boolean encontrada = false;
+        for (Tarea t : listaTareas) {
+            if (t.getId() == id) {
+                try {
+                    t.setCalificacion(nuevaCalificacion);
+                    t.setEstado("Calificada");
+                    System.out.println(":) Tarea calificada con " + nuevaCalificacion + " y estado actualizado exitosamente.");
+                    encontrada = true;
+                } catch (IllegalArgumentException e) {
+                System.out.println("⚠︎ ERROR: " + e.getMessage());
+                }
+                break;
+            }
+        }
+        if (!encontrada) System.out.println("⚠︎ No se encontro tarea con ID: "+ id);
+    }
+
+    public void verProgresoCurso(){
+        if (listaTareas.isEmpty()) {
+            System.out.println("⚠︎ No hay datos suficientes para calcular el progreso.");
+            return;
+    }
+    int total = listaTareas.size();
+    int entregadas = 0;
+    int calificadas = 0;
+    int sumaCalificaciones = 0;
+    for (Tarea t : listaTareas) {
+            if (t.getEstado().equalsIgnoreCase("Entregada")) entregadas++;
+            if (t.getEstado().equalsIgnoreCase("Calificada")) {
+                calificadas++;
+                sumaCalificaciones += t.getCalificacion();
+            }
+        }
+    double promedio = (calificadas > 0) ? (double) sumaCalificaciones / calificadas : 0.0;
+
+        System.out.println("\n>>>> PROGRESO DEL CURSO: ");
+        System.out.println("Total de Tareas Asignadas: " + total);
+        System.out.println("Tareas Entregadas (Por revisar): " + entregadas);
+        System.out.println("Tareas Calificadas: " + calificadas);
+        System.out.println("Promedio General de Notas: " + String.format("%.2f", promedio));
+    }
+
+    public void tareasPorUsuario(String correo) {
+         System.out.println("\n> Tareas de: " + correo);
+         boolean hay = false;
+         for (Tarea t : listaTareas) {
+             if (t.getUsuarioAsignado().equalsIgnoreCase(correo)) {
+                 System.out.println(t);
+                 hay = true;
+             }
+         }
+         if (!hay) System.out.println(":) No tienes tareas asignadas.");
     }
 
     // MÉTODO DE CIERRE DEL SISTEMA

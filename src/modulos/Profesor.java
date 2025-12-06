@@ -16,7 +16,8 @@ public class Profesor extends Usuario {
         System.out.println("4. Ver lista de tareas");
         System.out.println("5. Crear nueva tarea");
         System.out.println("6. Eliminar tarea");
-        System.out.println("7. Salir - Cerrar sesión");
+        System.out.println("7. Ver progreso del curso");
+        System.out.println("8. Salir - Cerrar sesión");
         System.out.print("Seleccione una opción: \n > ");
 
         try {
@@ -38,7 +39,7 @@ public class Profesor extends Usuario {
                 String correo = sc.nextLine();
                 System.out.print("Contraseña: ");
                 String password = sc.nextLine();
-                System.out.print("Rol (Profesor/Ayudante): ");
+                System.out.print("Rol (Profesor/Ayudante/Alumno): ");
                 String rol = sc.nextLine();
                 registrado = sistema.registrarUsuario(nombre, correo, password, rol);
 
@@ -75,10 +76,13 @@ public class Profesor extends Usuario {
                     int idEliminar = Integer.parseInt(sc.nextLine());
                 sistema.eliminarTarea(idEliminar);
                 } catch (NumberFormatException e) {
-                    System.out.println("⚠︎ ID inválido. Por favor ingrese un número.");
+                    System.out.println("⚠︎ ID inválido.");
                 }
                 break;
             case 7:
+                sistema.verProgresoCurso();
+                break;
+            case 8:
                 System.out.println("Cerrando sesión...");
                 break;
             default:

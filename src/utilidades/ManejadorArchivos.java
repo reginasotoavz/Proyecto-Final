@@ -7,6 +7,7 @@ import modulos.Usuario;
 import modulos.Profesor;
 import modulos.Ayudante;
 import modulos.Tarea;
+import modulos.Alumno;
 
 public class ManejadorArchivos {
     // Ruta donde se guardarán los archivos
@@ -23,7 +24,7 @@ public class ManejadorArchivos {
             } 
             System.out.println("Usuarios guardados correctamente.");
         } catch (IOException e) {
-            System.err.println("Error al guardar usuarios: " + e.getMessage());
+            System.err.println("⚠︎ Error al guardar usuarios: " + e.getMessage());
         }
     }
 
@@ -48,11 +49,13 @@ public class ManejadorArchivos {
                         usuarios.add(new Profesor(nombre, correo, password));
                     } else if (rol.equals("Ayudante")) {
                         usuarios.add(new Ayudante(nombre, correo, password));
+                    } else if (rol.equals("Alumno")) {
+                        usuarios.add(new Alumno(nombre, correo, password));
                     }
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error al cargar usuarios: " + e.getMessage());
+            System.err.println("⚠︎ Error al cargar usuarios: " + e.getMessage());
         }
         return usuarios;
     }
@@ -62,12 +65,12 @@ public class ManejadorArchivos {
         new File ("data").mkdirs();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(RUTA_TAREAS))) {
             for (Tarea t : tareas) {
-                writer.write(t.getId() + "," + t.getTitulo() + "," + t.getDescripcion() + "," + t.getFechaLimite().toString() + "," + t.getUsuarioAsignado() + "," + t.getEstado());
+                writer.write(t.getId() + "," + t.getTitulo() + "," + t.getDescripcion() + "," + t.getFechaLimite().toString() + "," + t.getUsuarioAsignado() + "," + t.getEstado() + "," + t.getCalificacion());
                 writer.newLine();
             }
             System.out.println("Tareas guardadas correctamente.");
         } catch (IOException e) {
-            System.err.println("Error al guardar tareas: " + e.getMessage());
+            System.err.println("⚠︎ Error al guardar tarea: " + e.getMessage());
         }
     }
 
@@ -82,7 +85,7 @@ public class ManejadorArchivos {
             String linea;
             while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",");
-                if (partes.length == 6) {
+                if (partes.length == 7) {
                     try {
                     int id = Integer.parseInt(partes[0]);
                     String titulo = partes[1];
@@ -90,18 +93,20 @@ public class ManejadorArchivos {
                     String fechaStr = partes[3];
                     String asignado = partes[4];
                     String estado = partes[5];
+                    int calificacion = Integer.parseInt(partes[6]);
 
                     Tarea t = new Tarea(id, titulo, descripcion, fechaStr, asignado);
                     t.setEstado(estado);
+                    t.setCalificacion(calificacion);
 
                     tareas.add(t);
                     } catch (NumberFormatException e) {
-                        System.err.println("Error al leer ID de tarea: " + linea);
+                        System.err.println("⚠︎ Error al leer ID de tarea: " + linea);
                     }
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error al cargar tareas: "+ e.getMessage());
+            System.err.println("⚠︎ Error al cargar tareas: "+ e.getMessage());
         }
         return tareas;
     }

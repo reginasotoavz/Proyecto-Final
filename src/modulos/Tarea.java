@@ -11,6 +11,7 @@ public class Tarea {
     private String estado;
     private LocalDate fechaLimite;
     private String usuarioAsignado;
+    private int calificacion;
 
     public Tarea(int id, String titulo, String fechaTexto, String descripcion, String usuarioAsignado) {
         this.id = id;
@@ -18,15 +19,14 @@ public class Tarea {
         this.descripcion = descripcion;
         this.usuarioAsignado = usuarioAsignado;
         this.estado = "pendiente"; // Estado inicial por defecto
+        this.calificacion = 0;
 
         try {
             this.fechaLimite = LocalDate.parse(fechaTexto);
         } catch (DateTimeParseException e) {
-            System.out.println("Error: Formato de fecha inválido(" + fechaTexto + ") Se usará la sigueinte semana");
+            System.out.println("⚠︎ Error: Formato de fecha inválido(" + fechaTexto + ") Se usará la sigueinte semana");
             this.fechaLimite = LocalDate.now().plusDays(7); 
         }
-
-        LocalDate fecha = LocalDate.parse(fechaTexto);
     }
 
     // MÉTODOS GETTERS Y SETTERS
@@ -48,6 +48,9 @@ public class Tarea {
     public String getEstado() {
         return estado;
     }
+    public int getCalificacion(){
+        return calificacion;
+    }
 
     public void setId(int nuevoId) {
         this.id = nuevoId;
@@ -64,9 +67,16 @@ public class Tarea {
     public void setEstado(String nuevoEstado) {
         this.estado = nuevoEstado;
     }
+    public void setCalificacion (int nuevaCalificacion) {
+        if (nuevaCalificacion < 0 || nuevaCalificacion > 10) {
+            throw new IllegalArgumentException("La calificación debe de estar entre 0 y 10.");
+         }
+        this.calificacion = nuevaCalificacion;
+    }
 
     @Override
     public String toString() {
-        return "Tarea ID: " + id + "\nEstado: " + "[" + estado + "] \nDescripción: " + descripcion + "\nAsignada a: " + usuarioAsignado + "\nFecha límite: " + fechaLimite + "\n";
+        String notaStr = (calificacion > 0) ? String.valueOf(calificacion) : "Sin calificar";
+        return "Tarea ID: " + id + "\nEstado: " + "[" + estado + "] \n Calificación: " + calificacion + "/10 \nDescripción: " + descripcion + "\nAsignada a: " + usuarioAsignado + "\nFecha límite: " + fechaLimite + "\n";
     }
 } 
