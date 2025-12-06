@@ -9,7 +9,7 @@ public class Profesor extends Usuario {
     public void mostrarMenu(SistemaTareas sistema, Scanner sc){
         int option = 0;
         do {
-        System.out.println("Menu de Profesor:"+this.getNombre());
+        System.out.println("\n>>>> Menu de Profesor:"+this.getNombre());
         System.out.println("1. Registrar nuevo usuario");
         System.out.println("2. Eliminar usuario");
         System.out.println("3. Ver lista de usuarios");
@@ -17,25 +17,35 @@ public class Profesor extends Usuario {
         System.out.println("5. Crear nueva tarea");
         System.out.println("6. Eliminar tarea");
         System.out.println("7. Salir - Cerrar sesión");
+        System.out.print("Seleccione una opción: \n > ");
 
         try {
             option = Integer.parseInt(sc.nextLine());
         } catch (NumberFormatException e) {
-            System.out.println("Por favor ingrese un número válido.");
+            System.out.println("⚠︎ Por favor ingrese un número válido.");
             option = -1;
             continue;
         }
         switch (option) {
             case 1:
+                boolean registrado = false;
+                do {
+                System.out.println("Nuevo registro (Escribe 'End' en nombre para cancelar)");
                 System.out.print("Nombre: ");
                 String nombre = sc.nextLine();
+                if (nombre.equalsIgnoreCase("End")) break;
                 System.out.print("Correo: ");
                 String correo = sc.nextLine();
                 System.out.print("Contraseña: ");
                 String password = sc.nextLine();
                 System.out.print("Rol (Profesor/Ayudante): ");
                 String rol = sc.nextLine();
-                sistema.registrarUsuario(nombre, correo, password, rol);
+                registrado = sistema.registrarUsuario(nombre, correo, password, rol);
+
+                if (!registrado) {
+                    System.out.println("\nIntentalo de Nuevo :) >>>");
+                }
+                } while (!registrado);
                 break;
             case 2:
                 System.out.print("Ingrese el correo del usuario a eliminar: ");
@@ -65,14 +75,14 @@ public class Profesor extends Usuario {
                     int idEliminar = Integer.parseInt(sc.nextLine());
                 sistema.eliminarTarea(idEliminar);
                 } catch (NumberFormatException e) {
-                    System.out.println("ID inválido. Por favor ingrese un número.");
+                    System.out.println("⚠︎ ID inválido. Por favor ingrese un número.");
                 }
                 break;
             case 7:
                 System.out.println("Cerrando sesión...");
                 break;
             default:
-                System.out.println("Opción no válida. Intente de nuevo.");
+                System.out.println("⚠︎ Opción no válida. Intente de nuevo.");
         }
     } while (option != 7);
     }

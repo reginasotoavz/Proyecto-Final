@@ -15,6 +15,7 @@ public class ManejadorArchivos {
 
     // GUARDAR USUARIOS
     public static void guardarUsuarios(List<Usuario> usuarios) {
+        new File("data").mkdirs();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(RUTA_USUARIOS))) {
             for (Usuario u: usuarios) {
                 writer.write(u.getRol() + "," + u.getNombre() + "," + u.getCorreo()+ "," + u.getPassword());

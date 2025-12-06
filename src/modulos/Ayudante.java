@@ -9,17 +9,19 @@ public class Ayudante extends Usuario {
     public void mostrarMenu(SistemaTareas sistema, Scanner sc){
         int option = 0;
         do {
-        System.out.println("Menu de Ayudante:"+this.getNombre());
+        System.out.println("\n>>>> Menu de Ayudante:"+this.getNombre());
         System.out.println("1. Ver lista de tareas");
         System.out.println("2. Actualizar estado de tarea");
         System.out.println("3. Salir - Cerrar sesión");
+        System.out.print("Seleccione una opción: \n > ");
 
         try {
             option = Integer.parseInt(sc.nextLine());
         } catch (NumberFormatException e) {
-            System.out.println("Por favor ingrese un número válido.");
+            System.out.println("⚠︎ Por favor ingrese un número válido.");
             continue;
         }
+
         switch (option) {
             case 1:
                 sistema.listarTareas();
@@ -35,7 +37,7 @@ public class Ayudante extends Usuario {
                 System.out.println("Cerrando sesión...");
                 break;
             default:
-                System.out.println("Opción no válida. Intente de nuevo.");
+                System.out.println("⚠︎ Opción no válida. Intente de nuevo.");
         }
     } while (option != 3);
     }

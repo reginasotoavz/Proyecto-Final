@@ -25,13 +25,13 @@ public class SistemaTareas {
         // Si no hay usuarios, se crea un usuario Profesor por defecto
         if (this.listaUsuarios.isEmpty()) {
             System.out.println("No hay usuarios registrados. Creando usuario Profesor por defecto.");
-            listaUsuarios.add(new Profesor("Admin", "admincorreo@test.com", "Admin123!"));
+            listaUsuarios.add(new Profesor("Profesor", "Profesor@correo.com", "Admin123!"));
     }
     }
 
     // MÉTODOS PRINCIPALES
     public void iniciar() {
-        System.out.println("> Iniciando Sistema de Tareas OdinDimadinDon <");
+        System.out.println(">>>> INICIANDO SISTEMA DE TAREAS 'OdinDimadinDon'");
         // Iniciar el hilo notificador
         hiloNotificador = new Notificador(this.listaTareas);
         hiloNotificador.start();
@@ -39,10 +39,10 @@ public class SistemaTareas {
         boolean salir = false;
         while (!salir) {
             // Mostrar menú principal (Login / Salir)
-            System.out.println("Bienvenidx al sistema de tareas.");
+            System.out.println(":) Bienvenidx al sistema de tareas.");
             System.out.println("1. Iniciar sesión");
             System.out.println("2. Salir");
-            System.out.print("Seleccione una opción: ");
+            System.out.print("Seleccione una opción: \n > ");
             String input = sc.nextLine();
 
             switch (input) {
@@ -52,10 +52,10 @@ public class SistemaTareas {
                 case "2":
                     salir = true;
                     cerrarSistema();
-                    System.out.println("Saliendo del sistema. ¡Hasta luego!");
+                    System.out.println("<<<< Saliendo del sistema. ¡Hasta luego!");
                     break;
                 default:
-                    System.out.println("Opción no válida. Por favor, intente de nuevo.");
+                    System.out.println("⚠︎ Opción no válida. Por favor, intente de nuevo.");
             }
         }
     }
@@ -75,11 +75,11 @@ public class SistemaTareas {
             }
         }
         if (usuarioEncontrado != null) {
-            System.out.println("Inicio de sesión exitoso. ¡Bienvenidx, " + usuarioEncontrado.getNombre() + "!");
+            System.out.println(":) Inicio de sesión exitoso. ¡Bienvenidx, " + usuarioEncontrado.getNombre() + "!");
             this.usuarioLogueado = usuarioEncontrado;
             usuarioLogueado.mostrarMenu(this, sc);
         } else {
-            System.out.println("❌ Correo o contraseña incorrectos.");
+            System.out.println("⚠︎ Correo o contraseña incorrectos.");
         }
     }
 
@@ -92,16 +92,16 @@ public class SistemaTareas {
             listaTareas.add(nuevaTarea);
             System.out.println("Tarea creada exitosamente con ID: " + nuevoId);
         } catch (IllegalArgumentException e) {
-            System.out.println("Error al crear tarea: " + e.getMessage());
+            System.out.println("⚠︎ Error al crear tarea: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Error inesperado al crear tarea (revise formato): " + e.getMessage());
+            System.out.println("⚠︎ Error inesperado al crear tarea (revise formato): " + e.getMessage());
         }
     }
 
     public void listarTareas() {
-        System.out.println("\n> Lista de Tareas:");
+        System.out.println("\n>>>> Lista de Tareas:");
         if (listaTareas.isEmpty()) {
-            System.out.println("No hay tareas registradas.");
+            System.out.println(":( No hay tareas registradas.");
             return;
         } else {
             for (Tarea t : listaTareas) {
@@ -113,9 +113,9 @@ public class SistemaTareas {
     public void eliminarTarea(int id) {
         boolean tareaEliminada = listaTareas.removeIf(t -> t.getId() == id);
         if (tareaEliminada) {
-            System.out.println("Tarea con ID " + id + " eliminada exitosamente.");
+            System.out.println(":) Tarea con ID " + id + " eliminada exitosamente.");
         } else {
-            System.out.println("No se encontró tarea con ID " + id + ".");
+            System.out.println("⚠︎ No se encontró tarea con ID " + id + ".");
         }
     }
 
@@ -129,38 +129,42 @@ public class SistemaTareas {
                 break;
             }
         }
-        if (!tareaEncontrada) System.out.println("No se encontró tarea con ID " + id + ".");
+        if (!tareaEncontrada) System.out.println("⚠︎ No se encontró tarea con ID " + id + ".");
     }
 
     // USUARIOS
-    public void registrarUsuario(String nombre, String correo, String password, String rol) {
+    public boolean registrarUsuario(String nombre, String correo, String password, String rol) {
        try { 
         // Verificar si el correo ya está registrado
         for (Usuario u : listaUsuarios) {
             if (u.getCorreo().equalsIgnoreCase(correo)) {
-                System.out.println("❌ Ya existe un usuario con ese correo.");
-                return;
+                System.out.println("⚠︎ Ya existe un usuario con ese correo.");
+                return false;
             }
         }
         // Crear y agregar el nuevo usuario según el rol
         if (rol.equalsIgnoreCase("Profesor")) {
             listaUsuarios.add(new Profesor(nombre, correo, password));
-            System.out.println("Usuario " + nombre + " registrado exitosamente como Profesor.");
+            System.out.println(":) Usuario " + nombre + " registrado exitosamente como Profesor.");
+            return true;
         } else if (rol.equalsIgnoreCase("Ayudante")) {
             listaUsuarios.add(new Ayudante(nombre, correo, password));
-            System.out.println("Usuario " + nombre + " registrado exitosamente como Ayudante.");
+            System.out.println(":) Usuario " + nombre + " registrado exitosamente como Ayudante.");
+            return true;
         } else {
-            System.out.println("❌ Rol inválido. Use 'Profesor' o 'Ayudante'.");
+            System.out.println("⚠︎ Rol inválido. Use 'Profesor' o 'Ayudante'.");
+            return false;
         } 
     } catch (IllegalArgumentException e) {
-            System.out.println("Error al registrar usuario: " + e.getMessage());
+            System.out.println("⚠︎ Error al registrar usuario: " + e.getMessage());
+            return false;
     }
-    }   
+    } 
 
     public void listarUsuarios() {
-        System.out.println("\n> Lista de Usuarios:");
+        System.out.println("\n>>>> Lista de Usuarios:");
         if (listaUsuarios.isEmpty()) {
-            System.out.println("No hay usuarios registrados.");
+            System.out.println(":( No hay usuarios registrados.");
             return;
         } else {
             for (Usuario u : listaUsuarios) {
@@ -171,21 +175,21 @@ public class SistemaTareas {
 
     public void eliminarUsuario(String correo) {
         if (usuarioLogueado != null && usuarioLogueado.getCorreo().equalsIgnoreCase(correo)) {
-            System.out.println("❌ No puede eliminar su propio usuario mientras está logueado.");
+            System.out.println("⚠︎ No puede eliminar su propio usuario mientras está logueado.");
             return;
         }
         boolean usuarioEliminado = listaUsuarios.removeIf(u -> u.getCorreo().equalsIgnoreCase(correo));
         
         if (usuarioEliminado) { 
-            System.out.println("Usuario con correo " + correo + " eliminado exitosamente.");
+            System.out.println(":) Usuario con correo " + correo + " eliminado exitosamente.");
         } else {
-            System.out.println("No se encontró usuario con correo " + correo + ".");
+            System.out.println("⚠︎ No se encontró usuario con correo " + correo + ".");
         }
     }
 
     // MÉTODO DE CIERRE DEL SISTEMA
     public void cerrarSistema() {
-        System.out.println("Guardando datos antes de salir...");
+        System.out.println("<<<< Guardando datos antes de salir...");
         
         ManejadorArchivos.guardarUsuarios(this.listaUsuarios);
         ManejadorArchivos.guardarTareas(this.listaTareas);
@@ -193,6 +197,6 @@ public class SistemaTareas {
         if (hiloNotificador != null) {
             hiloNotificador.detener();
         }
-        System.out.println("Datos guardados. \n Cerrando sistema. \n ¡Hasta luego!");
+        System.out.println(":) Datos guardados. \n Cerrando sistema. \n ¡Hasta luego! \n :(");
     }
 }
