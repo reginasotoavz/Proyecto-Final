@@ -55,6 +55,6 @@ public class Ayudante extends Usuario {
             default:
                 System.out.println("⚠︎ Opción no válida. Intente de nuevo.");
         }
-    } while (option != 3);
+    } while (option != 4);
     }
 }

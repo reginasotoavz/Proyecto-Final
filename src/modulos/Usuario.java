@@ -16,7 +16,7 @@ public abstract class Usuario {
         if (correo == null || !correo.contains("@") || !correo.endsWith(".com")) {
             throw new IllegalArgumentException("Correo no es válido (debe contener '@' y terminar en '.com').");
         }
-        if (rol == null || (!rol.equals("Profesor") && !rol.equals("Ayudante"))) {
+        if (rol == null || (!rol.equals("Profesor") && !rol.equals("Ayudante") && !rol.equals("Alumno"))) {
             throw new IllegalArgumentException("Rol debe ser 'Profesor' o 'Ayudante'.");
         }
 

@@ -88,7 +88,7 @@ public class Profesor extends Usuario {
             default:
                 System.out.println("⚠︎ Opción no válida. Intente de nuevo.");
         }
-    } while (option != 7);
+    } while (option != 8);
     }
 }
 

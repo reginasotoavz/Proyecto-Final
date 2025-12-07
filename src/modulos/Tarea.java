@@ -13,7 +13,7 @@ public class Tarea {
     private String usuarioAsignado;
     private int calificacion;
 
-    public Tarea(int id, String titulo, String fechaTexto, String descripcion, String usuarioAsignado) {
+    public Tarea(int id, String titulo, String descripcion, String fechaTexto, String usuarioAsignado) {
         this.id = id;
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -24,7 +24,7 @@ public class Tarea {
         try {
             this.fechaLimite = LocalDate.parse(fechaTexto);
         } catch (DateTimeParseException e) {
-            System.out.println("⚠︎ Error: Formato de fecha inválido(" + fechaTexto + ") Se usará la sigueinte semana");
+            System.out.println("⚠︎ Error: Formato de fecha inválido(" + fechaTexto + ") Se usará la siguiente semana");
             this.fechaLimite = LocalDate.now().plusDays(7); 
         }
     }
