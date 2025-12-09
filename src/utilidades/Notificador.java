@@ -20,7 +20,7 @@ public class Notificador extends Thread { // 1. Heredamos de Thread
 
     @Override
     public void run() {
-        System.out.println("--- Hilo Notificador iniciado ---\n>");
+        System.out.println("***Hilo Notificador iniciado");
         
         while (ejecutando) {
             try {
@@ -40,9 +40,6 @@ public class Notificador extends Thread { // 1. Heredamos de Thread
                         }
                     }
                 }
-
-                // Pausamos el hilo 10 segundos para no saturar la CPU
-                // En un caso real serían horas, pero para la demo usa segundos.
                 Thread.sleep(10000); 
 
             } catch (InterruptedException e) {

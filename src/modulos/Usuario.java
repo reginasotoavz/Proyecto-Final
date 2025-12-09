@@ -10,14 +10,14 @@ public abstract class Usuario {
 
     public Usuario(String nombre, String correo, String rol, String password) {
         if (nombre == null || nombre.length() < 5 ) {
-            throw new IllegalArgumentException("EL nombre debe de tener al menos 5 letras");
+            throw new IllegalArgumentException("⚠︎ EL nombre debe de tener al menos 5 letras");
         }
 
         if (correo == null || !correo.contains("@") || !correo.endsWith(".com")) {
-            throw new IllegalArgumentException("Correo no es válido (debe contener '@' y terminar en '.com').");
+            throw new IllegalArgumentException("⚠︎ Correo no es válido (debe contener '@' y terminar en '.com').");
         }
         if (rol == null || (!rol.equals("Profesor") && !rol.equals("Ayudante") && !rol.equals("Alumno"))) {
-            throw new IllegalArgumentException("Rol debe ser 'Profesor' o 'Ayudante'.");
+            throw new IllegalArgumentException("!!! Rol debe ser 'Profesor' / 'Ayudante' / 'Alumno'");
         }
 
         this.nombre = nombre;
@@ -27,28 +27,32 @@ public abstract class Usuario {
         setPassword(password);
     }
 
-    public String getNombre() { return nombre;
+    public String getNombre() { 
+        return nombre;
     }
-    public String getCorreo() { return correo;
+    public String getCorreo() { 
+        return correo;
     }
-    public String getRol() { return rol;
+    public String getRol() { 
+        return rol;
     }
-    public String getPassword() { return password;
+    public String getPassword() { 
+        return password;
     }
 
 
     public void setPassword(String password) {
         if (password == null || password.length() < 8) {
-            throw new IllegalArgumentException("Contraseña debe tener al menos 8 caracteres.");
+            throw new IllegalArgumentException("⚠︎ Contraseña debe tener al menos 8 caracteres.");
         }
         if (!password.matches(".*\\d.*")) {
-            throw new IllegalArgumentException("Contraseña debe contener al menos un número.");
+            throw new IllegalArgumentException("⚠︎ Contraseña debe contener al menos un número.");
         }
         if (!password.matches(".*[!@#$%^&*()].*")) {
-            throw new IllegalArgumentException("Contraseña debe contener al menos un carácter especial.");
+            throw new IllegalArgumentException("⚠︎ Contraseña debe contener al menos un carácter especial.");
         }
         if (password.contains(" ")) {
-            throw new IllegalArgumentException("Contraseña no debe contener espacios.");
+            throw new IllegalArgumentException("⚠︎ Contraseña no debe contener espacios.");
         }
         this.password = password;
     }

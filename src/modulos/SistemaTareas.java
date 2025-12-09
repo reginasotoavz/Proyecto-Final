@@ -197,8 +197,7 @@ public class SistemaTareas {
             if (t.getId() == id) {
                 try {
                     t.setCalificacion(nuevaCalificacion);
-                    t.setEstado("Calificada");
-                    System.out.println(":) Tarea calificada con " + nuevaCalificacion + " y estado actualizado exitosamente.");
+                    System.out.println(":) Tarea calificada con " + nuevaCalificacion);
                     encontrada = true;
                 } catch (IllegalArgumentException e) {
                 System.out.println("⚠︎ ERROR: " + e.getMessage());

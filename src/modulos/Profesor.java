@@ -34,7 +34,8 @@ public class Profesor extends Usuario {
                 System.out.println("Nuevo registro (Escribe 'End' en nombre para cancelar)");
                 System.out.print("Nombre: ");
                 String nombre = sc.nextLine();
-                if (nombre.equalsIgnoreCase("End")) break;
+                if (nombre.equalsIgnoreCase("End")) 
+                break;
                 System.out.print("Correo: ");
                 String correo = sc.nextLine();
                 System.out.print("Contraseña: ");
