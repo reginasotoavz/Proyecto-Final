@@ -244,6 +244,30 @@ public class SistemaTareas {
          }
          if (!hay) System.out.println(":) No tienes tareas asignadas.");
     }
+    
+    // Método seguro exclusivo para Alumnos
+    public void entregarTarea(int id, String correoAlumno) {
+        boolean encontrada = false;
+        for (Tarea t : listaTareas) {
+            if (t.getId() == id) {
+                encontrada = true;
+                if (t.getUsuarioAsignado().equalsIgnoreCase(correoAlumno)) {
+                    
+                    t.setEstado("Entregada");
+                    System.out.println("¡Excelente! Has entregado la tarea '" + t.getTitulo() + "'.");
+                    
+                } else {
+                    System.out.println("⚠ ACCESO DENEGADO: Esta tarea no te pertenece. ⚠");
+                    System.out.println("   (Asignada a: " + t.getUsuarioAsignado() + ")");
+                }
+                break; 
+            }
+        }
+        
+        if (!encontrada) {
+            System.out.println("⚠ No se encontró ninguna tarea con el ID " + id);
+        }
+    }
 
     // MÉTODO DE CIERRE DEL SISTEMA
     public void cerrarSistema() {

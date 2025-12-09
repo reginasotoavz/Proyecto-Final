@@ -65,8 +65,23 @@ public class Profesor extends Usuario {
                 String titulo = sc.nextLine();
                 System.out.print("Ingrese la descripción de la nueva tarea: ");
                 String descripcion = sc.nextLine();
-                System.out.print("Ingrese la fecha límite (YYYY-MM-DD): ");
-                String fechaLimite = sc.nextLine();
+                String fechaLimite = "";
+                boolean fechaValida = false;
+                do {
+                    System.out.print("Ingrese la fecha límite (YYYY-MM-DD): ");
+                    fechaLimite = sc.nextLine();
+                    
+                    try {
+                        java.time.LocalDate fecha = java.time.LocalDate.parse(fechaLimite);
+                        if (fecha.isBefore(java.time.LocalDate.now())) {
+                            System.out.println("⚠ Error: No puedes asignar una tarea en el pasado. Intenta de nuevo.");
+                        } else {
+                            fechaValida = true;
+                        }
+                    } catch (java.time.format.DateTimeParseException e) {
+                        System.out.println("⚠ Error: Formato inválido. Asegúrate de usar AAAA-MM-DD (ej: 2025-12-01).");
+                    }
+                } while (!fechaValida);
                 System.out.print("Ingrese el correo del usuario asignado: ");
                 String usuarioAsignado = sc.nextLine();
                 sistema.crearTarea(titulo, descripcion, fechaLimite, usuarioAsignado);

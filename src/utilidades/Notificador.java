@@ -20,7 +20,7 @@ public class Notificador extends Thread { // 1. Heredamos de Thread
 
     @Override
     public void run() {
-        System.out.println("***Hilo Notificador iniciado");
+        System.out.println("*** Hilo Notificador iniciado...");
         
         while (ejecutando) {
             try {

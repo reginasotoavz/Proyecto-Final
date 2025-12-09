@@ -31,7 +31,7 @@ public class Ayudante extends Usuario {
                 System.out.print("Ingrese el ID de la tarea a actualizar: ");
                 try {
                 int idTarea = Integer.parseInt(sc.nextLine());
-                System.out.print("Ingrese el nuevo estado de la tarea: ");
+                System.out.print("Ingrese el nuevo estado de la tarea Pendiente/Entregada/Calificada: ");
                 String nuevoEstado = sc.nextLine();
                 sistema.actualizarEstadoTarea(idTarea, nuevoEstado);
                 } catch (NumberFormatException e) {

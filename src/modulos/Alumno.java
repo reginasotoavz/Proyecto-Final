@@ -30,9 +30,9 @@ public class Alumno extends Usuario {
                 System.out.print("Ingrese el ID de la tarea a actualizar: ");
                 try {
                 int idTarea = Integer.parseInt(sc.nextLine());
-                sistema.actualizarEstadoTarea(idTarea, "Entregada");
+                sistema.entregarTarea(idTarea, this.getCorreo());
                 } catch (Exception e) {
-                        System.out.println("ID inválido.");
+                        System.out.println("⚠︎ ID inválido.");
                     }
                 break;
             case 3:

@@ -77,6 +77,6 @@ public class Tarea {
     @Override
     public String toString() {
         String notaStr = (calificacion > 0) ? String.valueOf(calificacion) : "Sin calificar";
-        return "Tarea ID: " + id + "\nEstado: " + "[" + estado + "] \n Calificación: " + calificacion + "/10 \nDescripción: " + descripcion + "\nAsignada a: " + usuarioAsignado + "\nFecha límite: " + fechaLimite + "\n";
+        return "Tarea ID: " + id + "\nEstado: " + "[" + estado + "] \nCalificación: " + calificacion + "/10 \nDescripción: " + descripcion + "\nAsignada a: " + usuarioAsignado + "\nFecha límite: " + fechaLimite + "\n";
     }
 } 
